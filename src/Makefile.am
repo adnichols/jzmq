@@ -36,7 +36,10 @@ JZMQ_CLASS_FILES = \
 	org/zeromq/ZMQForwarder.class \
 	org/zeromq/ZMQStreamer.class
 
-$(jarfile): $(dist_noinst_JAVA)
+JAVAH_FLAGS = -d . -classpath .
+
+$(jarfile): 
+	$(JAVAC) -d . $(JZMQ_JAVA_FILES)
 	$(JAR) cf $(JARFLAGS) $@ org/zeromq/*.class
 
 jar_DATA = $(jarfile)
@@ -62,10 +65,8 @@ CLEANFILES = \
 	$(JZMQ_CLASS_FILES) \
 	$(jarfile)
 
-$(JZMQ_H_FILES): org/zeromq/ZMQ.class
+$(JZMQ_H_FILES): $(jarfile)
 	$(CLASSPATH_ENV) $(JAVAH) -jni -classpath . org.zeromq.ZMQ
-
-./org/zeromq/ZMQ.class: classdist_noinst.stamp
 
 $(srcdir)/ZMQ.cpp: \
 	$(JZMQ_H_FILES) \
